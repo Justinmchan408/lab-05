@@ -156,6 +156,12 @@ The intercept, 1272.324 is the estimated value in dollars of the average price_3
 
 11. Suppose your family is planning to visit Santa Cruz over Spring Break, and you want to stay in an Airbnb. You find an Airbnb that is in Scotts Vallye, has 10 reviews, and 5.14 reviews per month. Use the model to predict the total cost to stay at this Airbnb for 3 nights. Include the appropriate 95% interval with your prediction.
 
+```{r prediction, eval=T}
+predict(modelfirst, data.frame(neigh_simp = "Other", number_of_reviews = 10, reviews_per_month = 5.14), interval = 'prediction')
+```
 
+The predicted cost of a three night stay at the City of Scotts Valley which was placed in the Other category for neighbourhood, has 10 reviews, and 5.14 reviews per month is 588.04 dollars. The 95 percent confidence interval for the cost is [-1199.65, 2364.74] where we can say that we are 95% confidence that the true cost of 3 night stay of AirBnB with these features is within this interval. The interval does not make too much sense though because it saying that we can get paid for our stay or pay negative amount of dollars for the stay. In other words, we know that if we took a random samples and generated a confidence interval for each of these samples, 95% of our confidence intervals would contain the true three night cost of AirBnB with these specifications.
 
 12. Now check the assumptions for your regression model. Should you be confident on interpreting the inferential results of your model?
+
+
