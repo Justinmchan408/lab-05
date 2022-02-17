@@ -107,4 +107,23 @@ I recreated the dataset after modifying it in the previous exercise so instead o
 
 5.What are the 4 most common values for the variable minimum_nights? Which value in the top 4 stands out? What is the likely intended purpose for Airbnb listings with this seemingly unusual value for minimum_nights? Show code and output to support your answer.
 
+```{r minimum night categories, include=TRUE}
+airbnb %>% 
+  count(minimum_nights)
+```
 
+The four most common variables for the minimum_nights for this AirBnb dataset in Santa Cruz is 1, 2, 3, and 30 nights. The value in the top 4 that stands out is 30 because it has the most counts for that many days which tend to have negative correlation where counts decrease as minimum nights increases. I think the intended purpose for at least staying thirty nights is at least a guarantee to more income which has people staying at least staying one month which makes cleaning eaiser. Furthermore, I think it could be targeted so people could have month stays which some people due for travel purposes..
+
+Airbnb is most commonly used for travel purposes, i.e. as an alternative to traditional hotels, so we only want to include Airbnb listings in our regression analysis that are intended for travel purposes. Filter airbnb so that it only includes observations with minimum_nights <= 3.
+
+```{r minimum night filtered, include=TRUE}
+airbnb_filtered <- airbnb %>% 
+  filter(minimum_nights >= 3)
+```
+
+6. For the response variable, we will use the total cost to stay at an Airbnb location for 3 nights. Create a new variable called price_3_nights that uses price and cleaning_fee to calculate the total cost to stay at the Airbnb property for 3 nights. Note that the cleaning fee is only applied one time per stay.
+
+```{r three night pruce, include=TRUE}
+airbnb_filtered <- airbnb_filtered %>% 
+  mutate(price_3_nights = price * 3 + cleaning_fee)
+```
