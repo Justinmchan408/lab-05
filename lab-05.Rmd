@@ -9,19 +9,102 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Lab 5
 
-
-```{r cars}
-summary(cars)
+Loading required packages for the lab:
+```{r packages, echo=TRUE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(stringr)
+library(knitr)
+library(skimr)
+library(broom)
 ```
 
-## Including Plots
+Read in dataset for Santa Cruz County Air BnBs:
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r dataset, include=TRUE}
+airbnb <- read_csv("/Users/chanj4/Desktop/School/STAT108/lab-05/listings.csv")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Exercises
+
+### Data Wrangling and EDA
+
+1. Some Airbnb rentals have cleaning fees, and we want to include the cleaning fee when we calculate the total rental cost. Create a variable call cleaning_fee calculated as the 2% of the price per night.
+
+```{r cleaning fee, echo=T}
+airbnb <- airbnb %>% 
+  mutate(cleaning_fee = price * .02)
+```
+
+2. Visualize the distribution of cleaning_fee and display the appropriate summary statistics. Use the graph and summary statistics to describe the distribution of cleaning_fee.
+```{r cleaning fee statistics, echo=T}
+ggplot(data = airbnb, aes(x = cleaning_fee)) +
+  geom_histogram() +
+  labs(title = "Distribution of Cleaning Fee",
+       x = "Cleaning Fee")
+
+airbnb %>%
+  summarise(min = min(cleaning_fee), 
+            q1 = quantile(cleaning_fee, probs = c(0.25)), 
+            median = median(cleaning_fee), 
+            q3 = quantile(cleaning_fee, probs = c(0.75)), 
+            max = max(cleaning_fee), 
+            iqr = IQR(cleaning_fee), 
+            mean = mean(cleaning_fee), 
+            std_dev = sd(cleaning_fee)
+            )
+```
+
+Using the graph from this exercise, it seems that cleaning_price seems to have a unimodel and skewed to the right shape where there are a high concentration of cleaning fees per night a bit above zero which tend to decrease the higher the cleaning fee in terms of counts. There is also quite a few outliers which I would say above 25 dollars per night in terms for the cleaning fee. Moving on to the summary statistics, if we compare the center measures, median 5 to the mean which is 6.38, we can clearly also see that the graph is skewed to the right. We can also see the graph is skewed right based on the spacing of min, q1, median, q3, and max which there is 25 percent of data between each of these values. One can see that the spacing between each of these variables increases after the median which show the graph being skewed to the right due to outliers. Also, the summary statistics show the standard deviation of the cleaning_fee to be 5.39 and the IQR to be 5.18 which gives a bit more insight to the spread.
+
+3. Next, let’s examine the neighbourhood.
+- How many different categories of neighbourhood are in the dataset? Show code and output to support your answer.
+```{r neighbourhood categories, echo=T}
+unique(airbnb$neighbourhood)
+```
+Based on the code and output, there are five different categories of neighbourhood in this dataset from AirBnBs.
+
+- Which 3 neighborhoods are most common in the data? These 3 property types make up what percent of the observations in the data? Show code and output to support your answer.
+
+```{r common neighbourhood, echo=T}
+airbnb %>% 
+  group_by(neighbourhood) %>% 
+  tally()
+```
+
+The three neighbourhoods that are most common in the data are Unincorporated Areas, City of Capitola, and City of Santa Cruz. The percentage that they make up in the dataset is 97.25 percent and can be calculated as:
+$$Percentage_{ThreeCommonNeightbourhoods} = \frac{218 + 369 + 861}{218 + 369 + 861 + 26 + 15} = \frac{1448}{1489} = 97.25\%$$
+4. Since an overwhelming majority of the observations in the data are one of the top 3 cities, we would like to create a simplified version of the neighbourhood variable that has 4 categories.
+
+```{r neighbourhood combined, include=T}
+airbnb <- airbnb %>%
+  mutate(neighbourhood = fct_lump(neighbourhood, n = 3))
+
+airbnb %>% 
+  count(neighbourhood)
+```
+
+We combined the City of Watsonville and City of Scotts Valley group for neighbourhoods into
+one category called Other so that we have four categories in total: the three largest neighbourhoods + other). There is evidence that we combined the rest of the groups based on the counts.
+
+Create a new variable called neigh_simp that has 4 categories: the three from the previous question and “Other” for all other places. Be sure to save the new variable in the data frame.
+```{r datasets again, include=TRUE}
+airbnb <- read_csv("/Users/chanj4/Desktop/School/STAT108/lab-05/listings.csv")
+
+airbnb <- airbnb %>% 
+  mutate(cleaning_fee = price * .02)
+
+airbnb <- airbnb %>%
+  mutate(neigh_simp = fct_lump(neighbourhood, n = 3))
+
+airbnb %>% 
+  count(neigh_simp)
+```
+
+I recreated the dataset after modifying it in the previous exercise so instead of changing the neighbourhood field, I added the new fieldm neigh_simp.
+
+
+5.What are the 4 most common values for the variable minimum_nights? Which value in the top 4 stands out? What is the likely intended purpose for Airbnb listings with this seemingly unusual value for minimum_nights? Show code and output to support your answer.
+
+
