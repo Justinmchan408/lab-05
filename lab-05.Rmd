@@ -127,3 +127,7 @@ airbnb_filtered <- airbnb %>%
 airbnb_filtered <- airbnb_filtered %>% 
   mutate(price_3_nights = price * 3 + cleaning_fee)
 ```
+
+Be sure price is in the correct format before calculating the new variable.
+
+7.Fit a regression model with the response variable from the previous question and the following predictor variables: neigh_simp, number_of_reviews, and reviews_per_month. Display the model with the inferential statistics and confidence intervals for each coefficient.
