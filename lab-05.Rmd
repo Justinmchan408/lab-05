@@ -164,4 +164,72 @@ The predicted cost of a three night stay at the City of Scotts Valley which was 
 
 12. Now check the assumptions for your regression model. Should you be confident on interpreting the inferential results of your model?
 
+The assumptions that should be checked for the regression model is linearity, Normal, constant variance, and independence condition. To start off, we want to check the model for the linearity condition where we want plot the residuals versus the predicted values and the residuals versus each predictor variable to ensure there is no pattern. Since there is clear pattern when it comes to plotting, it can be said that this passes the linearity condition. 
 
+```{r linearity conditon, eval=T}
+library(patchwork)
+
+residual_airbnb_aug <- augment(modelfirst)
+
+p1 = ggplot(data = residual_airbnb_aug, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.3) +
+  geom_hline(yintercept = 0, color = "red") +
+  labs(x = "Predicted", y = "Residuals", title = "Residuals vs. Predicted")
+
+p2 = ggplot(data = residual_airbnb_aug, aes(x = neigh_simp, y = .resid)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0, color = "red") +
+  labs(x = "Neighbourhood Simplified", y = "Residuals", title = "Residuals vs. Neighbourhood")
+
+p3 = ggplot(data = residual_airbnb_aug, aes(x = number_of_reviews, y = .resid)) +
+  geom_point(alpha = 0.3) +
+  geom_hline(yintercept = 0, color = "red") +
+  labs(x = "# of Reviews", y = "Residuals", title = "Residuals vs. Number of Reviews")
+
+p4 = ggplot(data = residual_airbnb_aug, aes(x = reviews_per_month, y = .resid)) +
+  geom_point(alpha = 0.3) +
+  geom_hline(yintercept = 0, color = "red") +
+  labs(x = "Reviews per Month", y = "Residuals", title = "Residuals vs. Reviews per Month")
+
+p1 + p2 + p3 + p4
+```
+
+The next condition we would like to look at is the constant variance condition. The constant variance condition is satisfied if the residuals values stay constant for across predicted values. We can plot residuals versus predicted values to see if residuals values stay constant across all the predicted values. Based on the plot below, we see a fan shape where the smaller predicted values for a three night stay for an airbnb in Santa Cruz have a much smaller variance than those with much larger predicted values. Therefore, we can say that the constant variance condition does not seem to be satisfied.
+
+```{r constant variance, eval=T}
+ggplot(data = residual_airbnb_aug, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.3) +
+  geom_hline(yintercept = 0, color = "red") +
+  labs(x = "Predicted", y = "Residuals", title = "Residuals vs. Predicted")
+
+```
+
+After constant variance, we want to check the Normality condition which mentions that given our set of predictor variables, the response variable should follow a Normal distribution across its mean. In other words, we can make a histogram of the residuals and/or normal QQ-plot of the residuals to check the normal condition. The histogram should be approximately unimodal and symmetric and the Normal QQ-Plot should generally follow a straight diagonal line to satisfy the Normal condition. Based on the graph below, our histogram of residuals is unimodal but not symmetric, it is skewed to the right so we can say that this model does not satisfy the Normal condition on our linear model should not be used in this case. Furthermore, we can see the QQPlot does not have all the points on the y = x line where there is upward facing parabola where the ends are above the line.
+
+```{r normal condition, eval=T}
+p1 = ggplot(data = residual_airbnb_aug, aes(x = .resid)) +
+  geom_histogram() +
+  labs(x = "Residuals", title = "Distribution of Residuals")
+
+p2 = ggplot(data = residual_airbnb_aug, aes(sample = .resid)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(title = "Normal QQ Plot of Residuals")
+
+p1 + p2
+```
+
+The last condition we want to check is the independence condition. The independence condition states that all observations are independent. Generally, we can state that the collection of data from AirBnB does not affect later collections of data points for the dataset. In other words, we can say that that the selection of one data point for this AirBnB dataset does not affect the next data point selection. However, we can plot the residuals against the observation number to check if this is true to see if there was no pattern in the order of collection. Based on this graph below, we can say that the independence condition is not satisfied because it does not seem that there is constant variance across all the observation order where the beginning observation points do not have much variance in residuals and later points have much larger variations closer to one another.
+
+```{r independence condition, eval=T}
+residual_airbnb_aug <- residual_airbnb_aug %>% 
+  mutate(obs_num = 1:nrow(residual_airbnb_aug))
+ggplot(data = residual_airbnb_aug, aes(x = obs_num, y = .resid)) +
+  geom_point(alpha = 0.3) +
+  labs(x = "Observation Number",
+       y = "Residuals",
+       title = "Residuals vs. Observation Number")
+```
+
+
+Since almost all conditions have not been satisfied except possibly the linearity condition, then we can say that our current model should not be used to estimate the price for a 3 night stay for an AirBnB in Santa Cruz.
