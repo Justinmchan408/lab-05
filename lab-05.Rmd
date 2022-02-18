@@ -23,7 +23,7 @@ library(broom)
 Read in dataset for Santa Cruz County Air BnBs:
 
 ```{r dataset, include=TRUE}
-airbnb <- read_csv("/Users/chanj4/Desktop/School/STAT108/lab-05/listings.csv")
+airbnb <- read_csv("/Users/chanj4/Desktop/School/STAT108/lab-05/rawdata/listings.csv")
 ```
 
 ## Exercises
