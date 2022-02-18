@@ -90,7 +90,7 @@ one category called Other so that we have four categories in total: the three la
 
 Create a new variable called neigh_simp that has 4 categories: the three from the previous question and “Other” for all other places. Be sure to save the new variable in the data frame.
 ```{r datasets again, include=TRUE}
-airbnb <- read_csv("/Users/chanj4/Desktop/School/STAT108/lab-05/listings.csv")
+airbnb <- read_csv("/Users/chanj4/Desktop/School/STAT108/lab-05/rawdata/listings.csv")
 
 airbnb <- airbnb %>% 
   mutate(cleaning_fee = price * .02)
@@ -235,3 +235,9 @@ ggplot(data = residual_airbnb_aug, aes(x = obs_num, y = .resid)) +
 
 
 Since almost all conditions have not been satisfied except possibly the linearity condition, then we can say that our current model should not be used to estimate the price for a 3 night stay for an AirBnB in Santa Cruz.
+
+```{r write mod data, include=FALSE}
+write.csv(airbnb_filtered, file = "/Users/chanj4/Desktop/School/STAT108/lab-05/mod_data/airbnb_filtered.csv")
+
+write.csv(residual_airbnb_aug, file = "/Users/chanj4/Desktop/School/STAT108/lab-05/mod_data/residual_airbnb_aug.csv")
+```
