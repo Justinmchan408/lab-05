@@ -130,6 +130,8 @@ airbnb_filtered <- airbnb_filtered %>%
 
 Be sure price is in the correct format before calculating the new variable.
 
+### Regression
+
 7.Fit a regression model with the response variable from the previous question and the following predictor variables: neigh_simp, number_of_reviews, and reviews_per_month. Display the model with the inferential statistics and confidence intervals for each coefficient.
 
 ```{r regression model, include=TRUE}
